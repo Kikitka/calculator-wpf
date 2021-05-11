@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace CalculatorWPF.Model
 {
@@ -11,12 +6,10 @@ namespace CalculatorWPF.Model
     {
         public string EditLine(string inputLine, string inputSymbol)
         {
-            var infinity = new Regex("[∞]");
+            const char infinity = '\u221E';
 
-            if (inputLine == "0" || infinity.IsMatch(inputLine))
-            {
-                inputLine = "";
-            }
+            if (inputLine.IndexOf(infinity) > -1)
+                inputLine = string.Empty;
 
             if (inputLine.Length < 20)
             {
@@ -75,14 +68,7 @@ namespace CalculatorWPF.Model
                 }
             }
 
-            if (countBrackets == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return countBrackets == 0;
         }
     }
 }

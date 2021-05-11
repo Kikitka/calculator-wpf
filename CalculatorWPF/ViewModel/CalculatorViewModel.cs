@@ -1,11 +1,6 @@
 ﻿using CalculatorWPF.Model;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Text.RegularExpressions;
 
 namespace CalculatorWPF.ViewModel
 {
@@ -57,19 +52,20 @@ namespace CalculatorWPF.ViewModel
         }
 
         //
-        private RelayCommand buttonPressCommand;
+        private RelayCommand _buttonPressCommand;
         public RelayCommand ButtonPressCommand
         {
             get
             {
-                return buttonPressCommand ??
-                  (buttonPressCommand = new RelayCommand(obj =>
+                return _buttonPressCommand ??
+                  (_buttonPressCommand = new RelayCommand(obj =>
                   {
-                      string buttonValue = obj as string;
+                      var buttonValue = obj as string;
 
                       switch(buttonValue)
                       {
-                          case "C": InputLine = "";
+                          case "C": 
+                              InputLine = string.Empty;
                               break;
                           case "<--":
                               if (InputLine.Length > 0)
@@ -78,16 +74,20 @@ namespace CalculatorWPF.ViewModel
                               }
                               break;
                           case "=":
-                              HistoryText += InputLine;
+                              var num = new Regex(@"\d$");
+                              if (InputLine.EndsWith(")") || num.IsMatch(InputLine.Last().ToString()))
+                              {
+                                  HistoryText += InputLine;
 
-                              Calculator calculator = new Calculator();
-                              InputLine = calculator.Calculate(InputLine).ToString();
+                                  var calculator = new Calculator();
+                                  InputLine = calculator.Calculate(InputLine).ToString();
 
-                              HistoryText += "=" + InputLine + "\n";
+                                  HistoryText += "=" + InputLine + "\n";
+                              }
                               break;
                           default: 
                               InputSymbol = buttonValue;
-                              LineChecker lineChecker = new LineChecker();
+                              var lineChecker = new LineChecker();
 
                               InputLine = lineChecker.EditLine(InputLine, InputSymbol);
                               break;

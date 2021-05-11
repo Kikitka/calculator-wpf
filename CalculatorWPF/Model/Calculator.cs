@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace CalculatorWPF.Model
 {
@@ -42,29 +40,37 @@ namespace CalculatorWPF.Model
                     //Работа с символами
                     if (stack.Count > 0)
                     {
-                        if (ch == ")")
+                        switch (ch)
                         {
-                            while (stack.Peek() != "(")
+                            case ")":
                             {
-                                tempStr.Add(stack.Pop());
+                                while (stack.Peek() != "(")
+                                {
+                                    tempStr.Add(stack.Pop());
+                                }
+                                stack.Pop();
+                                break;
                             }
-                            stack.Pop();
-                        }
-                        else if (ch == "(")
-                        {
-                            stack.Push(ch);
-                        }
-                        else if (CheckPriority(ch) <= CheckPriority(stack.Peek()))
-                        {
-                            while (stack.Count > 0 && CheckPriority(ch) <= CheckPriority(stack.Peek()))
+                            case "(":
+                                stack.Push(ch);
+                                break;
+                            default:
                             {
-                                tempStr.Add(stack.Pop());
+                                if (CheckPriority(ch) <= CheckPriority(stack.Peek()))
+                                {
+                                    while (stack.Count > 0 && CheckPriority(ch) <= CheckPriority(stack.Peek()))
+                                    {
+                                        tempStr.Add(stack.Pop());
+                                    }
+                                    stack.Push(ch);
+                                }
+                                else
+                                {
+                                    stack.Push(ch);
+                                }
+
+                                break;
                             }
-                            stack.Push(ch);
-                        }
-                        else
-                        {
-                            stack.Push(ch);
                         }
                     }
                     else
